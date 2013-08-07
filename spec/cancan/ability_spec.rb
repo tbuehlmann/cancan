@@ -24,6 +24,7 @@ describe CanCan::Ability do
     @ability.can?(:read, :some_symbol).should == true
   end
 
+  # This test is wrong, the behaviour described should not be correct.
   it "should pass nil to a block when no instance is passed" do
     @ability.can :read, Symbol do |sym|
       sym.should be_nil
@@ -55,6 +56,7 @@ describe CanCan::Ability do
     @block_called.should be_true
   end
 
+  # This test is wrong, the behaviour described should not be correct.
   it "should not call block when only class is passed, only return true" do
     @block_called = false
     @ability.can :preview, :all do |object|
@@ -453,6 +455,14 @@ describe CanCan::Ability do
       @ability.merge(another_ability)
       @ability.can?(:use, :search).should be_true
       @ability.send(:rules).size.should == 2
+    end
+  end
+
+  describe 'block definition' do
+    it 'does not grant permission when using a class as subject' do
+      @ability.can(:read, Object) { |object| true }
+
+      @ability.can?(:read, Object).should be_false
     end
   end
 end
